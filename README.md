@@ -21,7 +21,7 @@ OR
 for more information.  
 ## Logistic Regression Binary Document Classifier (GP)
 
-Given a set of training documents, X, and their corresponding labels, y, the parameter, &theta;=[&theta;<sub>1</sub>,&theta;<sub>2</sub>,...,&theta;<sub>n</sub>]<sup>T</sup> is learned via genetic programming. The predicted classes for a set of unlabeled documents is generated according to the learned model.
+Given a set of training documents, X, and their corresponding labels, y, the parameter, &theta;=[&theta;<sub>1</sub>,&theta;<sub>2</sub>,...,&theta;<sub>n</sub>]<sup>T</sup> is learned via genetic programming. If a set of unlabeled documents is provided as a command line argument, then the predicted classes for the documents is printed. If the ground truth for the set of unlabeled documents is provided, then the accuracy of the predictions is reported as well.
 
 `python GeneticOptimizer.py --help`
 

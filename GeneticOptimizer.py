@@ -34,9 +34,9 @@ centered at mu with standard deviation sigma^2. The next iteration of evolution 
 Required Input: 
         input training documents, X
         input training labels,    y
-        unlabeled documents,      z
 
 Optional Input:
+        unlabeled documents,      z
         population size,  n_p [DEFAULT: 100] 
         mutation rate,    m   [DEFAULT: .01] 
         survival rate,    s   [DEFAULT: .3] 
@@ -71,16 +71,19 @@ def _load_train(data, labels):
     # Load the labels.
     y = np.loadtxt(labels, dtype = int)
     X = _load_X(data)
-
-    # Return.
     return [X, y]
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description = "Assignment 2",
         epilog = "CSCI 4360/6360 Data Science II: Fall 2017",
         add_help = "How to use",
-        prog = "python assignment2.py [train-data] [train-label] [test-data] <optional args>")
-    parser.add_argument("paths", nargs = 3)
+        prog = "python assignment2.py -x <train-data> -y <train-label> <optional args>")
+    parser.add_argument("-x", "--traindata", default = 100, required = True,
+        help = "The training data for learning the model.")
+    parser.add_argument("-y", "--trainlabel", default = 100, required = True,
+        help = "The training labels for learning the model.")
+    parser.add_argument("-z", "--testdata", 
+        help = "Unlabeled data for generating predictions.")
     parser.add_argument("-n", "--population", default = 100, type = int,
         help = "Population size [DEFAULT: 100].")
     parser.add_argument("-s", "--survival", default = 0.3, type = float,
@@ -98,10 +101,8 @@ if __name__ == "__main__":
         np.random.seed(args['random'])
 
     # Read in the training data.
-    X, y = _load_train(args["paths"][0], args["paths"][1])
+    X, y = _load_train(args["traindata"], args["trainlabel"])
     
-    ### FINISH ME
-
     DEBUG = False
     
     #declare useful variables
@@ -113,7 +114,7 @@ if __name__ == "__main__":
     v=int(X.shape[1])                            #the size of the vocabulary
 
     if DEBUG : print("args:",args)
-    test_data = args['paths'][2]
+    test_data = args['testdata']
     
     #initialize a random population.
     pop = np.random.normal(loc=0,scale = 1,size = (n,v))    #an initial population drawn from a normal distribution in an nXv matrix
@@ -166,7 +167,7 @@ if __name__ == "__main__":
         return coin*mutations + (1-coin)*offspring
 
     for i in range(0,g):                                                           #run the generations
-        if DEBUG : print("generation",i)
+        print("generation",i)
         doc_copy   = copy_doc(X)
         combo_cube = combine_cubes(pop,doc_copy)
         preds      = make_predictions(combo_cube)
@@ -181,9 +182,10 @@ if __name__ == "__main__":
     survivors = cull_flock(pop,preds,y)
     highlander = survivors[0]                                       #the most fit of the final generation...THERE CAN BE ONLY ONE! 
 
-    Z = _load_Z(test_data)                                          #the test data
+    if not test_data == None:
+        Z = _load_Z(test_data)                                          #the test data
     
-    predictions = predict(h(np.sum(highlander*Z,axis=1)))           #make predictions using the Highlander
+        predictions = predict(h(np.sum(highlander*Z,axis=1)))           #make predictions using the Highlander
 
-    for p in predictions:
-        print(p)
+        for p in predictions:
+            print(p)

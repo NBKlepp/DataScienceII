@@ -22,14 +22,12 @@ from numpy import linalg as la
 import argparse
 import pandas as pd
 
-STEP_SIZE = 0.0001
-
 '''
 A method to read the word count training file and return a matrix representing the word count training data.
 See above note for specifications on the trainingDataFile format specifications. 
 '''
 def getData(trainingDataFile):
-    data  = pd.read_table(trainingDataFile,header=None, names=["doc_id","word_id","count"],sep=" ") 
+    data  = pd.read_table(trainingDataFile,header=None, names=["doc_id","word_id","count"],sep=" ")
     words = data.word_id.max()
     docs  = data.doc_id.max()
     matrix = np.array([1]*docs*(words+1)).reshape((docs,(words+1)))
@@ -62,7 +60,6 @@ The cost function.
 '''
 def cost(X,y,theta):
     a = h(X,theta)
-    print(a)
     cost1 = -y * np.log(a)
     cost2 = (1-y)*np.log(1-a)
     cost = cost1 - cost2
@@ -86,7 +83,9 @@ def train(X,y):
     converged = False
     i = 0
     while not converged :
-        if i%1000 == 0 : print("i = ", i, ", cost = ", cost(X,y,theta))
+        if i%1000 == 0 :
+            if not i==0 : print("i = ", i, ", cost = ", cost(X,y,theta))
+            print("...")
         i+=1
         X_t    = np.transpose(X)
         a      = h(X,theta)
@@ -103,24 +102,39 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description = "Assignment 1",
         epilog = "CSCI 4360/6360 Data Science II: Fall 2017",
         add_help = "How to use",
-                    prog = "python LogisticRegressionClassifier.py [train-data] [train-label] [test-data] [test-labels]")
-    parser.add_argument("paths", nargs = 4)
+        prog = "python LogisticRegressionClassifier.py -d <input_data_path> -l <input_labels_path> [optional args]")
+
+    parser.add_argument("-d", "--data",required = True,
+        help = "The path input data to learn the model")
+    parser.add_argument("-l", "--labels",required = True,
+        help = "The path to the input labels to learn the model")
+    parser.add_argument("-u", "--testdata",
+        help = "The path to the tes data to make predictions on")
+    parser.add_argument("-v", "--testlabels",
+        help = "The path to the test labels to test the accuracy of the model.")
+    parser.add_argument("-a", "--alpha",type=float, default = .0001, 
+        help = "The learning rate for gradient decent")
     args = vars(parser.parse_args())
     
-    training_data_file = args["paths"][0]
-    training_label_file = args["paths"][1]
-    testing_data_file = args["paths"][2]
-    testing_label_file = args["paths"][3]
-
+    training_data_file = args["data"]
+    training_label_file = args["labels"]
+    testing_data_file = args["testdata"]
+    testing_label_file = args["testlabels"]
+    STEP_SIZE = args['alpha']
+    
     X_train = getData(training_data_file)
-    X_test  = getData(testing_data_file)
-    y_train = getLabels(training_label_file)
-    y_test  = getLabels(testing_label_file)
+    y_train  = getLabels(training_label_file)
+    if not testing_data_file == None  : X_test = getData(testing_data_file)
+    if not testing_label_file == None : y_test  = getLabels(testing_label_file)
     
     theta = train(X_train,y_train)
 
-    y_preds = pred(h(X_test,theta))
+    if not testing_data_file == None  : 
+        y_preds = pred(h(X_test,theta))
+        print("Predictions: ", y_preds)
 
-    accuracy = np.sum(np.where(y_preds==y_test,1,0))/y_preds.size 
-    
-    print("total accuracy: ",accuracy)
+    if not testing_label_file == None :
+        accuracy = np.sum(np.where(y_preds==y_test,1,0))/y_preds.size 
+        print("total accuracy: ",accuracy)
+
+        
