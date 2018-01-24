@@ -143,7 +143,7 @@ if __name__ == "__main__":
     if DEBUG : print("x.size:",x.size)
 
     #the difference is so small, it can be hard to see! 
-    print("Diff:",pca.singular_values_ - pca2.singular_values_)
+    if DEBUG : print("Diff:",pca.singular_values_ - pca2.singular_values_)
    
     plots = []
 
@@ -165,4 +165,5 @@ if __name__ == "__main__":
     handles, labels = plt.gca().get_legend_handles_labels()
     by_label = OrderedDict(zip(labels,handles))
     plt.legend(by_label.values(),by_label.keys())
+    plt.title("Comparing the SVD Solvers")
     plt.show()

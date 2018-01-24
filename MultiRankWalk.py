@@ -6,6 +6,11 @@ Author : Nicholas Klepp
 This is an implementation of the multi-rank walk algorithm. 
 @see https://lti.cs.cmu.edu/sites/default/files/research/reports/2009/cmulti09017.pdf
 
+This program will take in a set of data points as well as a set of labels for those points,
+labels >=0 for known data labels and -1 for unlabeled data points. It will produce predictions
+for the unlabeled data points, and write the predictions to a specified output file. 
+The input data should be one instance per line of the input file. 
+The input labels should be one label per line of the input file corresponding to the data points. 
 '''
 import argparse
 import numpy as np
