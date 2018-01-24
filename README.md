@@ -39,3 +39,9 @@ OR
 ## StochasticSVD
 
 This is an implementation of a stochastic singular value decomposition solver which compares its results to the results of both the deterministic and stochastic SVD solvers implemented in the scikit learn package. Interestingly, this implementation far outperforms the stochastic SVD solver implemented in the scikit learn package in every tested environment. No data need be provided to the program; the program will run on the MNIST dataset by default. The performance of the implemented SSVD solver versus the stock SSVD solver as well as the deterministic solver will be plotted to the screen. 
+
+`python StochasticSVD.py --help`
+
+OR
+
+`python StochasticSVD.py -h`
